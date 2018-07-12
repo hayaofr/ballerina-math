@@ -28,8 +28,8 @@ import org.ballerinalang.natives.annotations.ReturnType;
  * Native function wso2.ballerina.math:pow.
  */
 @BallerinaFunction(
-        orgName = "ballerina",
-        packageName = "mymath",
+        orgName = "sam",
+        packageName = "mymath:0.0.0",
         functionName = "random",
         returnType = {@ReturnType(type = TypeKind.FLOAT)},
         isPublic = true

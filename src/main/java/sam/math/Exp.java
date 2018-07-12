@@ -30,8 +30,8 @@ import org.ballerinalang.natives.annotations.ReturnType;
  * Native function wso2.ballerina.math:exp.
  */
 @BallerinaFunction(
-        orgName = "ballerina",
-        packageName = "mymath",
+        orgName = "sam",
+        packageName = "mymath:0.0.0",
         functionName = "exp",
         args = {@Argument(name = "val", type = TypeKind.FLOAT)},
         returnType = {@ReturnType(type = TypeKind.FLOAT)},

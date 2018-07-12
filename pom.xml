@@ -22,34 +22,63 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ballerina-math</artifactId>
     <packaging>jar</packaging>
-    <version>0.1</version>
+    <version>0.0.0</version>
     <name>Ballerina - Native Implementation</name>
     <url>http://ballerinalang.org</url>
 
-
+    <properties>
+        <java.version>1.8</java.version>
+        <maven.compiler.version>3.6.0</maven.compiler.version>
+        <!--<ballerinalang.version>0.972.1-SNAPSHOT</ballerinalang.version>-->
+        <!-- Path to the ballerina source directory -->
+        <ballerina.source.directory>${project.build.directory}/../src/main/ballerina</ballerina.source.directory>
+        <!-- Path to the generated natives ballerina files temp directory -->
+        <!--<generated.ballerina.source.directory>${project.build.directory}/natives</generated.ballerina.source.directory>-->
+        <generated.ballerina.source.directory>${project.build.directory}/../src/main/ballerina</generated.ballerina.source.directory>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.ballerinalang</groupId>
-            <artifactId>ballerina-core</artifactId>
-            <version>${ballerinalang.version}</version>
+            <artifactId>ballerina-lang</artifactId>
+            <version>0.975.0</version>
         </dependency>
         <dependency>
             <groupId>org.ballerinalang</groupId>
-            <artifactId>ballerina-lang</artifactId>
-            <version>${ballerinalang.version}</version>
+            <version>0.975.0</version>
+            <artifactId>lib-creator</artifactId>
         </dependency>
         <dependency>
             <groupId>org.ballerinalang</groupId>
             <artifactId>ballerina-builtin</artifactId>
-            <version>${ballerinalang.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ballerinalang</groupId>
-            <artifactId>ballerina-logging</artifactId>
-            <version>${ballerinalang.version}</version>
+            <version>0.975.0</version>
+            <type>zip</type>
+            <classifier>ballerina-binary-repo</classifier>
         </dependency>
     </dependencies>
+
+    <!--<dependencies>-->
+        <!--<dependency>-->
+            <!--<groupId>org.ballerinalang</groupId>-->
+            <!--<artifactId>ballerina-core</artifactId>-->
+            <!--<version>${ballerinalang.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.ballerinalang</groupId>-->
+            <!--<artifactId>ballerina-lang</artifactId>-->
+            <!--<version>${ballerinalang.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.ballerinalang</groupId>-->
+            <!--<artifactId>ballerina-builtin</artifactId>-->
+            <!--<version>${ballerinalang.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.ballerinalang</groupId>-->
+            <!--<artifactId>ballerina-logging</artifactId>-->
+            <!--<version>${ballerinalang.version}</version>-->
+        <!--</dependency>-->
+    <!--</dependencies>-->
 
     <build>
         <resources>
@@ -63,7 +92,12 @@
             <!-- copy built-in ballerina sources to the jar -->
             <resource>
                 <directory>${generated.ballerina.source.directory}</directory>
-                <targetPath>META-INF/ballerina</targetPath>
+                <targetPath>META-INF/natives</targetPath>
+            </resource>
+            <!-- copy ballerina annotation sources to the jar -->
+            <resource>
+                <directory>${project.build.directory}/../src/main/ballerina</directory>
+                <targetPath>META-INF/</targetPath>
             </resource>
         </resources>
         <plugins>
@@ -92,6 +126,79 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <id>gen-balo</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>BALLERINA_DEV_MODE_COMPILE</key>
+                                    <value>true</value>
+                                </systemProperty>
+                            </systemProperties>
+                            <arguments>
+                                <!--is built in pkg loaded from source-->
+                                <argument>false</argument>
+                                <!--source project dir-->
+                                <argument>${basedir}/src/main/ballerina/sam</argument>
+                                <!--balo destination-->
+                                <argument>${project.build.directory}/generated-balo/repo/sam</argument>
+                                <!--ballerina home-->
+                                <argument>${project.build.directory}</argument>
+                                <!--not used-->
+                                <argument>${project.version}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>org.ballerinalang.stdlib.utils.GenerateBalo</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-dependencies</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeClassifiers>ballerina-binary-repo</includeClassifiers>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>distribution</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <configuration>
+                            <descriptorSourceDirectory>assembly</descriptorSourceDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.version}</version>
@@ -105,14 +212,30 @@
         </plugins>
     </build>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.version>3.6.0</maven.compiler.version>
-        <ballerinalang.version>0.972.1-SNAPSHOT</ballerinalang.version>
-        <!-- Path to the ballerina source directory -->
-        <ballerina.source.directory>${project.build.directory}/../src/main/ballerina</ballerina.source.directory>
-        <!-- Path to the generated natives ballerina files temp directory -->
-        <!--<generated.ballerina.source.directory>${project.build.directory}/natives</generated.ballerina.source.directory>-->
-        <generated.ballerina.source.directory>${project.build.directory}/../src/main/ballerina</generated.ballerina.source.directory>
-    </properties>
+
+    <repositories>
+        <repository>
+            <id>wso2.releases</id>
+            <name>WSO2 Releases Repository</name>
+            <url>http://maven.wso2.org/nexus/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>wso2.snapshots</id>
+            <name>WSO2 Snapshot Repository</name>
+            <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
 </project>

@@ -32,8 +32,8 @@ import javax.websocket.OnError;
  * Native function wso2.ballerina.math:pow.
  */
 @BallerinaFunction(
-        orgName = "ballerina",
-        packageName = "mymath",
+        orgName = "sam",
+        packageName = "mymath:0.0.0",
         functionName = "pow",
         args = {@Argument(name = "a", type = TypeKind.FLOAT),
                 @Argument(name = "b", type = TypeKind.FLOAT)},

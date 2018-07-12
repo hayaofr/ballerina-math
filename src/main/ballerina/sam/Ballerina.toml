@@ -1,0 +1,7 @@
+[project]
+org-name = "sam"
+version = "0.0.0"
+
+authors = ["hayao@free.fr"]
+license = "Apache-2.0"
+
