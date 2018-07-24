@@ -18,6 +18,9 @@ public type CypherConnector object {
 
     public {
         string keystore;
+        string keystorePassword;
+        string keyAlias;
+        string keyPassword;
     }
 
     public native function cypher(string stringToCypher) returns (string);
@@ -26,12 +29,19 @@ public type CypherConnector object {
 //Configuration Object
 public type CypherConfig {
     string keystore;
+    string keystorePassword;
+    string keyAlias;
+    string keyPassword;
 };
 
 // =========== Implementation of the Endpoint
 
 public function CypherClient::init (CypherConfig cypherConfig) {
-    self.cypherConnector.name = cypherConfig.name;
+    self.cypherConnector.keystore = cypherConfig.keystore;
+    self.cypherConnector.keystorePassword = cypherConfig.keystorePassword;
+    self.cypherConnector.keyAlias = cypherConfig.keyAlias;
+    self.cypherConnector.keyPassword = cypherConfig.keyPassword;
+
 
 }
 
