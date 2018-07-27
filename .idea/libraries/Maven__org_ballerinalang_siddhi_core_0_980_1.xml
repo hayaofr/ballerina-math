@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.ballerinalang:siddhi-core:0.980.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ballerinalang/siddhi-core/0.980.1/siddhi-core-0.980.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ballerinalang/siddhi-core/0.980.1/siddhi-core-0.980.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/ballerinalang/siddhi-core/0.980.1/siddhi-core-0.980.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

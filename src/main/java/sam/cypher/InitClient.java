@@ -23,6 +23,7 @@ import org.ballerinalang.model.types.TypeKind;
 import org.ballerinalang.model.values.BString;
 import org.ballerinalang.natives.annotations.Argument;
 import org.ballerinalang.natives.annotations.BallerinaFunction;
+import org.ballerinalang.natives.annotations.Receiver;
 import org.ballerinalang.natives.annotations.ReturnType;
 
 /**
@@ -31,12 +32,12 @@ import org.ballerinalang.natives.annotations.ReturnType;
 @BallerinaFunction(
         orgName = "sam",
         packageName = "mymath:0.0.0",
-        functionName = "cypher",
-        args = {@Argument(name = "stringToCypher", type = TypeKind.STRING)},
-        returnType = {@ReturnType(type = TypeKind.STRING)},
+        functionName = "initClient",
+        receiver = @Receiver(type = TypeKind.OBJECT, structType = "Listener",
+                structPackage = "sam/cypher"),
         isPublic = true
 )
-public class Cypher extends BlockingNativeCallableUnit {
+public class InitClient extends BlockingNativeCallableUnit {
 
     public void execute(Context ctx) {
 

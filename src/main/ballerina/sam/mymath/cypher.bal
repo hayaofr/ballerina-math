@@ -1,33 +1,27 @@
-import ballerina/io;
-
-// Endpoint Contract
-public type CypherClient object {
-
-    public {
-        CypherConnector cypherConnector = new;
-    }
-
-    public function init (CypherConfig cypherConfig);
-
-    public function getClient () returns CypherConnector;
-};
-
-
 // Connector Contract
 public type CypherConnector object {
 
-    public {
-        string keystore;
-        string keystorePassword;
-        string keyAlias;
-        string keyPassword;
-    }
+    public CypherConfig config;
 
     public native function cypher(string stringToCypher) returns (string);
 };
 
+// Endpoint Contract
+public type CypherClient object {
+
+    private CypherConfig cypherConfig;
+
+    public CypherConnector cypherConnector = new;
+
+    public function init(CypherConfig config);
+
+    public native function initClient();
+
+    public function getCallerActions() returns CypherConnector;
+};
+
 //Configuration Object
-public type CypherConfig {
+public type CypherConfig record {
     string keystore;
     string keystorePassword;
     string keyAlias;
@@ -36,17 +30,15 @@ public type CypherConfig {
 
 // =========== Implementation of the Endpoint
 
-public function CypherClient::init (CypherConfig cypherConfig) {
-    self.cypherConnector.keystore = cypherConfig.keystore;
-    self.cypherConnector.keystorePassword = cypherConfig.keystorePassword;
-    self.cypherConnector.keyAlias = cypherConfig.keyAlias;
-    self.cypherConnector.keyPassword = cypherConfig.keyPassword;
+function CypherClient::init(CypherConfig config) {
+    self.cypherConnector.config = config;
 
+    self.initClient();
 
 }
 
-public function CypherClient::getClient () returns CypherConnector {
-    return self.CypherConnector;
+function CypherClient::getCallerActions() returns CypherConnector {
+    return self.cypherConnector;
 }
 
 // =========== End of implementation of the Endpoint
